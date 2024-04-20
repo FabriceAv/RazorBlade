@@ -148,6 +148,11 @@ public partial class RazorBladeSourceGenerator : IIncrementalGenerator
                 });
 
                 cfg.Features.Add(new ErrorOnTagHelperSyntaxTreePass());
+
+                cfg.AddTargetExtension(new /*RazorBlade.Analyzers.Support.*/Microsoft.AspNetCore.Razor.Language.Extensions.TemplateTargetExtension()
+                {
+                    TemplateTypeName = "global::RazorBlade.HelperResult",
+                });
             }
         );
 

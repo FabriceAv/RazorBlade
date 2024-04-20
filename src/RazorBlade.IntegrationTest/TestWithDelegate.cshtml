@@ -1,0 +1,23 @@
+﻿@inherits RazorBlade.HtmlTemplate
+@using RazorBlade
+@using System
+
+@functions
+{
+    public HtmlString Row(object[] items, Func<object, HelperResult> func)
+    {
+        var sb = new System.Text.StringBuilder(); //better to use a StringWriter !
+        foreach (var item in items)
+        {
+            sb.Append(func(item));
+        }
+
+        return new HtmlString(sb.ToString());
+    }
+}
+@{
+    Func<dynamic, object> b = @<strong>@item</strong>;
+}
+
+<span>Before</span> @Row(new[] { "Hello&", "World" }, @<b>@item</b>) @b("After")"
+

@@ -18,9 +18,14 @@ public abstract class RazorTemplate : IEncodedContent
     private ExecutionScope? _executionScope;
 
     /// <summary>
+    /// To override the output (Push/Pop Writer - testing)
+    /// </summary>
+    protected internal TextWriter? OutputRedirect;
+
+    /// <summary>
     /// The <see cref="TextWriter"/> which receives the output.
     /// </summary>
-    protected internal TextWriter Output => _executionScope?.BufferedOutput ?? TextWriter.Null;
+    protected internal TextWriter Output => OutputRedirect ?? _executionScope?.BufferedOutput ?? TextWriter.Null;
 
     /// <summary>
     /// The cancellation token.
@@ -34,6 +39,38 @@ public abstract class RazorTemplate : IEncodedContent
     {
         get => _executionScope?.Layout;
         set => (_executionScope ?? throw new InvalidOperationException("The layout can only be set while the template is executing.")).SetLayout(value);
+    }
+
+    /// <summary>
+    /// To save the changes to the output.
+    /// </summary>
+    private readonly Stack<TextWriter?> _textWriterStack = new();
+
+    /// <summary>
+    /// Temporary redirects the output to the given <see cref="TextWriter"/>.
+    /// </summary>
+    /// <param name="writer"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    protected internal virtual void PushWriter(TextWriter writer)
+    {
+        if (writer == null)
+        {
+            throw new ArgumentNullException(nameof(writer));
+        }
+
+        _textWriterStack.Push(_executionScope?.BufferedOutput);
+        OutputRedirect = writer;
+    }
+
+    /// <summary>
+    /// Restore the output to the previous <see cref="TextWriter"/>.
+    /// </summary>
+    /// <returns></returns>
+    protected internal virtual TextWriter PopWriter()
+    {
+        var o = _textWriterStack.Pop();
+        OutputRedirect = _textWriterStack.Count > 0 ? o : null;
+        return Output;
     }
 
     /// <summary>

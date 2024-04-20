@@ -50,7 +50,8 @@ public class EmbeddedLibrarySourceGeneratorTests
                                            .AddReferences(
                                                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
                                                MetadataReference.CreateFromFile(Path.Combine(runtimeDir, "netstandard.dll")),
-                                               MetadataReference.CreateFromFile(Path.Combine(runtimeDir, "System.Runtime.dll"))
+                                               MetadataReference.CreateFromFile(Path.Combine(runtimeDir, "System.Runtime.dll")),
+                                               MetadataReference.CreateFromFile(Path.Combine(runtimeDir, "System.Collections.dll"))
                                            )
                                            .AddSyntaxTrees(CSharpSyntaxTree.ParseText(string.Empty, parseOptions))
                                            .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithNullableContextOptions(NullableContextOptions.Enable));
