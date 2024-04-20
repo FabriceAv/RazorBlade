@@ -65,15 +65,22 @@ public partial class RazorBladeSourceGenerator : IIncrementalGenerator
 
         options.TryGetValue("build_metadata.AdditionalFiles.IsRazorBlade", out var isTargetFile);
         if (!string.Equals(isTargetFile, bool.TrueString, StringComparison.OrdinalIgnoreCase))
+        {
             return null;
+        }
 
         if (!options.TryGetValue("build_metadata.AdditionalFiles.Namespace", out var ns))
+        {
             ns = null;
+        }
+
+        options.TryGetValue("build_property.RazorBlade_HelperResult", out var helperResult);
 
         return new InputFile(
             additionalText,
             ns,
-            CSharpIdentifier.SanitizeIdentifier(Path.GetFileNameWithoutExtension(additionalText.Path))
+            CSharpIdentifier.SanitizeIdentifier(Path.GetFileNameWithoutExtension(additionalText.Path)),
+            helperResult
         );
     }
 
@@ -83,13 +90,17 @@ public partial class RazorBladeSourceGenerator : IIncrementalGenerator
 
         var sourceText = file.AdditionalText.GetText();
         if (sourceText is null)
+        {
             return;
+        }
 
         var csharpDoc = GenerateRazorCode(sourceText, file, globalOptions);
         var libraryCode = GenerateLibrarySpecificCode(csharpDoc, globalOptions, compilation, context.CancellationToken);
 
         foreach (var diagnostic in csharpDoc.Diagnostics)
+        {
             context.ReportDiagnostic(diagnostic.ToDiagnostic());
+        }
 
         context.AddSource(
             $"{file.Namespace}.{file.ClassName}.Razor.g.cs",
@@ -151,7 +162,7 @@ public partial class RazorBladeSourceGenerator : IIncrementalGenerator
 
                 cfg.AddTargetExtension(new /*RazorBlade.Analyzers.Support.*/Microsoft.AspNetCore.Razor.Language.Extensions.TemplateTargetExtension()
                 {
-                    TemplateTypeName = "global::RazorBlade.HelperResult",
+                    TemplateTypeName = file.HelperResult ?? "global::RazorBlade.HelperResult",
                 });
             }
         );
@@ -180,7 +191,7 @@ public partial class RazorBladeSourceGenerator : IIncrementalGenerator
 
     static partial void OnGenerate();
 
-    private record InputFile(AdditionalText AdditionalText, string? Namespace, string ClassName);
+    private record InputFile(AdditionalText AdditionalText, string? Namespace, string ClassName, string? HelperResult);
 
     private record GlobalOptions(CSharpParseOptions ParseOptions, ImmutableArray<SyntaxTree> AdditionalSyntaxTrees);
 }

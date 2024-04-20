@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <AvailableItemName Include="RazorBlade" />
+    <CompilerVisibleProperty Include="RazorBlade_HelperResult" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableDefaultItems)' == 'true' and '$(EnableDefaultRazorBladeItems)' == 'true'">

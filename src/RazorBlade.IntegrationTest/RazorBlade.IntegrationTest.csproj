@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
+    <!--<RazorBlade_HelperResult>Another.HelperResult</RazorBlade_HelperResult>-->
   </PropertyGroup>
 
   <Import Project="../RazorBlade/RazorBlade.props" />
@@ -9,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="../RazorBlade/RazorBlade.csproj" />
     <ProjectReference Include="../RazorBlade.Analyzers/RazorBlade.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <CompilerVisibleProperty Include="RazorBlade_HelperResult" />
   </ItemGroup>
 
   <ItemGroup>
