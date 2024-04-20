@@ -74,7 +74,10 @@ public partial class RazorBladeSourceGenerator : IIncrementalGenerator
             ns = null;
         }
 
-        options.TryGetValue("build_property.RazorBlade_HelperResult", out var helperResult);
+        if (!options.TryGetValue("build_property.RazorBlade_HelperResult", out var helperResult) || helperResult == string.Empty)
+        {
+            helperResult = null;
+        }
 
         return new InputFile(
             additionalText,
